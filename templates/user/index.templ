@@ -1,0 +1,30 @@
+package user_templates
+
+import "github.com/w1png/go-htmx-ecommerce-template/models"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
+
+templ Index(featured_products []*models.Product) {
+@Base("Главная") {
+@indexPage(featured_products)
+}
+}
+
+templ IndexApi(featured_products []*models.Product) {
+@scripts.SetTitle("Главная")
+@Navbar()
+@indexPage(featured_products)
+}
+
+templ indexPage(featured_products []*models.Product) {
+<div class="container mx-auto h-screen p-8 mt-16 sample-transition">
+  <div class="w-full h-full border-2 rounded-xl flex flex-col justify-center items-center">
+    <h1 class="text-4xl">Content</h1>
+  </div>
+  <div class="w-full h-full border-2 rounded-xl flex flex-col justify-center items-center">
+    <h1 class="text-4xl">Content</h1>
+  </div>
+  <div class="w-full h-full border-2 rounded-xl flex flex-col justify-center items-center">
+    <h1 class="text-4xl">Content</h1>
+  </div>
+</div>
+}
