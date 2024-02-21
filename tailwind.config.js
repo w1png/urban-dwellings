@@ -8,9 +8,12 @@ module.exports = {
         width: "width",
       },
       colors: {
+        text: "#2B2D33",
+        subtext: "#555A65",
         accent: "#6DC8C5",
+        secondary: "#F7F8FA",
         delete: "#FF5F5F",
-        border: "#8A8A8A",
+        border: "#D7DAE2",
         hover: "#5d5d5d",
         error: "#FF5F5F",
         "submit-disabled": "#D9D9D9",

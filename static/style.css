@@ -12,7 +12,7 @@ body {
   font-weight: 400;
   font-style: normal;
 
-  @apply scroll-smooth;
+  @apply scroll-smooth text-text;
 }
 
 strong {
@@ -67,11 +67,11 @@ input {
 
 @layer components {
   .input {
-    @apply rounded-2xl border border-border py-4 px-6 w-full h-12;
+    @apply rounded-2xl border-2 border-border py-4 px-6 w-full;
   }
 
   .select {
-    @apply rounded-2xl border border-border py-2 px-6 w-full h-12;
+    @apply rounded-2xl border-2 border-border py-2 px-6 w-full;
   }
 }
 
@@ -84,13 +84,13 @@ input {
 }
 
 .submit {
-  @apply py-2 px-6 border-2 border-accent bg-accent text-white text-2xl rounded-2xl hover:bg-white hover:text-accent
+  @apply py-4 px-6 border-2 border-accent bg-accent text-white rounded-xl hover:bg-white hover:text-accent
 transition-all cursor-pointer
 ease-in-out duration-300;
 }
 
 .delete {
-  @apply py-2 px-6 border-2 border-delete bg-delete text-white text-2xl rounded-2xl hover:bg-white hover:text-delete
+  @apply py-4 px-6 border-2 border-delete bg-delete text-white rounded-xl hover:bg-white hover:text-delete
 transition-all cursor-pointer
 ease-in-out duration-300;
 }
@@ -220,4 +220,8 @@ input[type="checkbox"]:checked + .admin-checkbox:before {
   .mobile-hidden {
     @apply hidden;
   }
+}
+
+.opacity-intersection {
+  @apply opacity-0;
 }
