@@ -55,12 +55,12 @@ templ heroSection() {
 		class="absolute bg-secondary h-[60vh] aspect-square -left-1/4 top-1/2 rounded-full -z-10 -translate-x-full"
 		x-init="$el.classList.remove('-translate-x-full')"
 	></div>
-	<div class="w-full h-[min(100vh,55rem)] flex flex-row gap-4">
+	<div class="w-full h-[min(100vh,55rem)] flex flex-row gap-4 justify-between">
 		<div
-			class="w-1/2 h-full justify-center flex flex-col gap-5 -translate-x-full opacity-0"
+			class="w-1/3 h-full justify-center flex flex-col gap-5 -translate-x-full opacity-0"
 			x-init="setTimeout(() => $el.classList.remove('-translate-x-full', 'opacity-0'), 200)"
 		>
-			<h1 class="text-7xl">не просто<br/><strong>МЕБЕЛЬ</strong></h1>
+			<h1 class="text-7xl text-nowrap">не просто<br/><strong>МЕБЕЛЬ</strong></h1>
 			<p class="text-subtext">
 				Добро пожаловать в URBAN DWELLINGS, ваш надежный партнер в мире стиля и комфорта. Наша мебель
 				отличается высочайшим качеством и стилем, подчеркивая уникальность вашего дома.

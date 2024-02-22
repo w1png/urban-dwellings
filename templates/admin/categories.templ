@@ -150,6 +150,7 @@ templ categoriesPage(categories []*models.Category, search string) {
 				hx-target="#category-list"
 				hx-swap="innerHTML"
 				hx-trigger="input changed delay:500ms, search"
+				value={ search }
 			/>
 			<button
 				class="submit"

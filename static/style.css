@@ -49,7 +49,7 @@ input[type="file"] {
 
 .labeled-input-parent input,
 .labeled-input-parent textarea {
-@apply input;
+@apply input resize-none;
 }
 
 .readonly-labeled-input-parent {

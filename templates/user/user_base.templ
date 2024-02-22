@@ -4,7 +4,9 @@ import "github.com/w1png/go-htmx-ecommerce-template/templates"
 
 templ Base(title string) {
 	@templates.Base(title) {
-		@Navbar()
-		{ children... }
+		<div class="overflow-x-hidden">
+			@Navbar()
+			{ children... }
+		</div>
 	}
 }

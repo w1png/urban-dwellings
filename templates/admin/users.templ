@@ -125,6 +125,7 @@ templ usersPage(users []*models.User, search string) {
 				hx-target="#user-list"
 				hx-swap="innerHTML"
 				hx-trigger="input changed delay:500ms, search"
+        value={ search }
 			/>
 			<button
 				class="submit"

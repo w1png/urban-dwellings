@@ -1,13 +1,14 @@
 package main
 
 import (
-	"gorm.io/gorm"
 	"log"
 
+	"gorm.io/gorm"
+
 	"github.com/w1png/go-htmx-ecommerce-template/config"
+	"github.com/w1png/go-htmx-ecommerce-template/file_storage"
 	"github.com/w1png/go-htmx-ecommerce-template/models"
 	"github.com/w1png/go-htmx-ecommerce-template/storage"
-	"github.com/w1png/go-htmx-ecommerce-template/utils"
 )
 
 func createDefaultAdmin() error {
@@ -34,15 +35,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err := file_storage.InitFileStorage(); err != nil {
+		log.Fatal(err)
+	}
+
 	if err := createDefaultAdmin(); err != nil {
 		log.Fatal(err)
 	}
 
-	if err := utils.CreateImagesFolderIfNotExists(); err != nil {
-		log.Fatal(err)
-	}
-
 	server := NewHTTPServer()
-
 	log.Fatal(server.Run())
 }

@@ -1,0 +1,157 @@
+package admin_templates
+
+import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/components"
+import "github.com/w1png/go-htmx-ecommerce-template/models"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/components/icons"
+import "fmt"
+
+templ Collection(collection *models.Collection) {
+<div class="admin-object-card-parent justify-between p-2" id={ fmt.Sprintf("collection_%d", collection.ID) }>
+  <div class="flex flex gap-2 h-full">
+    <img class="h-full aspect-square rounded-md" src={ collection.Thumbnail.GetUrl("image", "webp" ) } />
+    <span class="text-xl truncate">{ collection.Title }</span>
+  </div>
+  <div class="flex flex-row gap-2">
+			<button
+				class="submit h-12 group"
+				hx-get={ fmt.Sprintf("/admin/api/collections/%d/edit", collection.ID) }
+				hx-target="#edit-collection-target"
+				hx-swap="innerHTML"
+			>
+				@icons.Edit("h-6 aspect-square text-white group-hover:text-accent block md:hidden")
+				<span class="hidden md:block">Редактировать</span>
+			</button>
+			<button
+				class="delete h-12 group"
+				hx-get={ fmt.Sprintf("/admin/api/collections/%d/delete", collection.ID) }
+				hx-target="#delete-collection-target"
+				hx-swap="innerHTML"
+			>
+				@icons.Delete("h-6 aspect-square text-white group-hover:text-delete block md:hidden")
+				<span class="hidden md:block">Удалить</span>
+			</button>
+		</div>
+</div>
+}
+
+templ DeleteCollectionModal(collection *models.Collection) {
+	@components.Modal("delete_collection_modal_open") {
+		<span hx-ext="response-targets" x-init="delete_collection_modal_open = true">
+			<div class="w-[min(30rem,90vw)] bg-white rounded-2xl border-2 border-accent flex flex-col gap-4 p-6">
+				<h3 class="font-bold text-2xl">Удаление коллекции</h3>
+				<hr/>
+				<p class="text-subtext">Вы уверены, что хотите удалить коллекцию { collection.Title }?</p>
+				<div class="w-full flex flex-row gap-2">
+					<button
+						hx-target={ fmt.Sprintf("#collection_%d", collection.ID) }
+						hx-swap="outerHTML"
+						class="delete"
+						hx-delete={ fmt.Sprintf("/admin/api/collections/%d", collection.ID) }
+						@click="delete_collection_modal_open = false"
+					>Удалить</button>
+					<button class="submit" @click="delete_collection_modal_open = false">Отмена</button>
+				</div>
+			</div>
+		</span>
+	}
+}
+
+templ CollectionsList(collections []*models.Collection, next_page int, search string) {
+for _, collection := range collections {
+@Collection(collection)
+}
+if len(collections) == models.COLLECTIONS_PER_PAGE {
+<span class="hidden" hx-get={ fmt.Sprintf("/admin/api/collections/page/%d?search=%s", next_page, search) }
+  hx-target="#collection-list" hx-swap="beforeend" hx-trigger="revealed" hx-indicator="#pagination-loading"></span>
+}
+}
+
+templ AddCollectionModal() {
+@components.Modal("add_collection_modal_open") {
+<span hx-ext="response-targets" x-init="add_collection_modal_open = true">
+  <form hx-post="/admin/api/collections" hx-target="#collection-list" hx-swap="afterbegin" hx-target-error="#error"
+    hx-encoding="multipart/form-data"
+    class="w-[min(30rem,90vw)] bg-white rounded-2xl border-2 border-accent flex flex-col gap-2 p-6">
+    <div class="h-24 w-full flex flex-row justify-between items-center gap-2">
+      <div class="h-full aspect-square rounded-xl flex items-center justify-center bg-secondary"
+        id="add-collection-preview">
+        <img class="h-12 aspect-square" src="/static/image.svg" />
+      </div>
+      <img class="h-full aspect-square rounded-xl hidden" id="add-image-preview"
+        onload="document.getElementById('add-collection-preview').classList.add('hidden'); this.classList.remove('hidden')" />
+      <label class="submit w-full h-fit">
+        Загрузить
+        <input type="file" name="image" id="add-image" accept="image/*"
+          @input="document.getElementById('add-image-preview').src = window.URL.createObjectURL($el.files[0])" />
+      </label>
+    </div>
+    @components.LabeledInput("Название", "text", "title", "add-title", "", "", "w-full")
+    @components.LabeledTextarea("Описание", "add-description", "description", "", "")
+    @components.Checkbox("Включено", "add-is_enabled", "is_enabled", "true", true)
+    <p id="error" class="error"></p>
+    <button class="submit" x-on:htmx:after-swap.window="add_collection_modal_open = false">Добавить</button>
+  </form>
+</span>
+}
+}
+
+templ EditCollectionModal(collection *models.Collection) {
+  @components.Modal("edit_collection_modal_open") {
+<span hx-ext="response-targets" x-init="edit_collection_modal_open = true">
+  <form hx-put={ fmt.Sprintf("/admin/api/collections/%d", collection.ID) } hx-target={ fmt.Sprintf("#collection_%d", collection.ID) } hx-swap="outerHTML" hx-target-error="#error"
+    hx-encoding="multipart/form-data"
+    class="w-[min(30rem,90vw)] bg-white rounded-2xl border-2 border-accent flex flex-col gap-2 p-6">
+    <div class="h-24 w-full flex flex-row justify-between items-center gap-2">
+      <div class="h-full aspect-square rounded-xl flex items-center justify-center bg-secondary"
+        id="edit-collection-preview">
+        <img class="h-12 aspect-square" src="/static/image.svg" />
+      </div>
+      <img class="h-full aspect-square rounded-xl hidden" id="edit-image-preview"
+        src={ collection.Thumbnail.GetUrl("image", "webp") }
+        onload="document.getElementById('edit-collection-preview').classList.add('hidden'); this.classList.remove('hidden')" />
+      <label class="submit w-full h-fit">
+        Загрузить
+        <input type="file" name="image" id="add-image" accept="image/*"
+          @input="document.getElementById('edit-image-preview').src = window.URL.createObjectURL($el.files[0])" />
+      </label>
+    </div>
+    @components.LabeledInput("Название", "text", "title", "edit-title", collection.Title, "", "w-full")
+    @components.LabeledTextarea("Описание", "edit-description", "description", collection.Description, "")
+    @components.Checkbox("Включено", "edit-is_enabled", "is_enabled", "true", collection.IsEnabled)
+    <p id="error" class="error"></p>
+    <button class="submit" x-on:htmx:after-swap.window="edit_collection_modal_open = false">Сохранить</button>
+  </form>
+</span>
+}
+}
+
+templ collectionsPage(collections []*models.Collection, search string) {
+<span x-data="{ add_collection_modal_open: false }" id="add-collection-target"></span>
+<span id="edit-collection-target" x-data="{ edit_collection_modal_open: false }"></span>
+<span id="delete-collection-target" x-data="{ delete_collection_modal_open: false }"></span>
+<div class="container mx-auto p-4 flex flex-col gap-6 mt-16">
+  <div class="flex flex-row gap-2">
+    <input type="text" class="input" name="search" placeholder="Поиск" hx-post="/admin/api/collections/search"
+      hx-target="#collection-list" hx-swap="innerHTML" hx-trigger="input changed delay:500ms, search" value={ search } />
+    <button class="submit" hx-get="/admin/api/collections/add" hx-target="#add-collection-target"
+      hx-swap="innerHTML">Добавить</button>
+  </div>
+  <div class="flex flex-col gap-2" id="collection-list">
+    @CollectionsList(collections, 2, search)
+  </div>
+  <p class="htmx-indicator" id="pagination-loading">Загрузка...</p>
+</div>
+}
+
+templ CollectionsApi(collections []*models.Collection, search string) {
+@scripts.SetTitle("Коллекции")
+@Navbar()
+@collectionsPage(collections, search)
+}
+
+templ Collections(collections []*models.Collection, search string) {
+@Base("Коллекции") {
+@collectionsPage(collections, search)
+}
+}

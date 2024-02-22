@@ -24,6 +24,8 @@ type Config struct {
 	PostgresUser     string `env:"POSTGRES_USER" default:"postgres"`
 	PostgresPassword string `env:"POSTGRES_PASSWORD" default:"postgres"`
 	PostgresDatabase string `env:"POSTGRES_DATABASE" default:"postgres"`
+
+	ObjectStorageBucketName string `env:"OBJECT_STORAGE_BUCKET_NAME"`
 }
 
 func InitConfig() error {
