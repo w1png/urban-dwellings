@@ -71,7 +71,7 @@ input[type="file"] {
 }
 
 .select {
-@apply rounded-2xl border-2 border-border py-2 px-6 w-full;
+@apply rounded-2xl border-2 border-border py-4 px-6 w-full;
 }
 }
 
@@ -167,21 +167,17 @@ view-transition-name: page-transition-animation;
 hover:scale-105;
 }
 
-.admin-checkbox:before {
+.checkbox:before {
 content: "";
-display: block;
-width: 1rem;
-height: 1rem;
-border-radius: 50%;
-@apply bg-white border-[2px] transition-colors ease-in-out duration-300;
+@apply bg-white border border-border block w-4 h-4 rounded-full;
 }
 
-.admin-checkbox {
+.checkbox {
 @apply flex flex-row gap-2 items-center cursor-pointer select-none;
 }
 
-input[type="checkbox"]:checked + .admin-checkbox:before {
-@apply bg-blue-500 border-blue-500;
+input[type="checkbox"]:checked + .checkbox:before {
+@apply bg-accent border-accent;
 }
 
 [data-tooltip] {

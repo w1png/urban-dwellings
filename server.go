@@ -44,7 +44,7 @@ func NewHTTPServer() *HTTPServer {
 		user_handlers.GatherProductsRoutes,
 		// admin_handlers.GatherProductsRoutes,
 		user_handlers.GatherCategoriesRoutes,
-		// admin_handlers.GatherCategoriesRoutes,
+		admin_handlers.GatherCategoriesRoutes,
 		user_handlers.GatherOrdersRoutes,
 		// admin_handlers.GatherOrdersRoutes,
 		user_handlers.GatherCartRoutes,
