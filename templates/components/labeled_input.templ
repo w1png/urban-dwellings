@@ -1,0 +1,8 @@
+package components
+
+templ LabeledInput(label, type_, name, id, value, placeholder, div_class string) {
+	<label class={ "labeled-input-parent" , div_class }>
+		{ label }
+		<input type={ type_ } name={ name } id={ id } value={ value } placeholder={ placeholder }/>
+	</label>
+}

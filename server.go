@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo"
 	echoMiddleware "github.com/labstack/echo/middleware"
 	"github.com/w1png/go-htmx-ecommerce-template/config"
+	admin_handlers "github.com/w1png/go-htmx-ecommerce-template/handlers/admin"
 	user_handlers "github.com/w1png/go-htmx-ecommerce-template/handlers/user"
 	"github.com/w1png/go-htmx-ecommerce-template/middleware"
 )
@@ -37,9 +38,9 @@ func NewHTTPServer() *HTTPServer {
 
 	gather_funcs := []func(*echo.Echo, *echo.Group, *echo.Group, *echo.Group){
 		user_handlers.GatherIndexHandlers,
-		// admin_handlers.GatherIndexRoutes,
-		// user_handlers.GatherLoginRoutes,
-		// admin_handlers.GatherUsersRoutes,
+		admin_handlers.GatherIndexRoutes,
+		user_handlers.GatherLoginRoutes,
+		admin_handlers.GatherUsersRoutes,
 		user_handlers.GatherProductsRoutes,
 		// admin_handlers.GatherProductsRoutes,
 		user_handlers.GatherCategoriesRoutes,

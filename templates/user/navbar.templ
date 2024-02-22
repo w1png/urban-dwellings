@@ -1,5 +1,7 @@
 package user_templates
 
+import "github.com/w1png/go-htmx-ecommerce-template/templates/components"
+
 templ categoriesButton() {
 <p class="text-2xl cursor-pointer select-none hover:text-gray-600 whitespace-nowrap">Категории</p>
 }
@@ -14,25 +16,18 @@ document.getElementById("navbar").classList.remove("bg-white");
 });
 }
 
-templ NavbarButton(text, href, request_url string) {
-<div class="flex flex-col group items-center">
-  <a href={ templ.SafeURL(href) } hx-push-url={ href } hx-get={ request_url } class="text-sm">{ text }</a>
-  <div class="max-w-0 group-hover:max-w-full w-full h-0.5 bg-black"></div>
-</div>
-}
-
 templ Navbar() {
-<div class="fixed top-0 right-0 left-0 w-screen h-16 z-50" id="navbar">
+<div class="fixed top-0 right-0 left-0 w-screen h-16 z-40" id="navbar">
   <div class="container mx-auto h-full flex items-center justify-between gap-2 z-20 px-4" hx-target="body"
-    hx-swap="outerHTML transition:true" hx-boost="true">
+    hx-swap="outerhtml transition:true" hx-boost="true">
     <a href="/" hx-get="/api/index" hx-push-url="/" class="h-full aspect-video">
       <img class="h-full w-full" src="/static/logo.svg" />
     </a>
     <div class="h-full grow flex items-center justify-end gap-8">
-      @NavbarButton("Главная", "/", "/api/index")
-      @NavbarButton("Категории", "/categories", "/api/categories")
-      @NavbarButton("О нас", "/about", "/api/about")
-      @NavbarButton("Контакты", "/contacts", "/api/contacts")
+      @components.NavbarButton("Главная", "/", "/api/index")
+      @components.NavbarButton("Категории", "/categories", "/api/categories")
+      @components.NavbarButton("О нас", "/about", "/api/about")
+      @components.NavbarButton("Контакты", "/contacts", "/api/contacts")
     </div>
   </div>
 </div>

@@ -1,14 +1,8 @@
 package components
 
-import "github.com/w1png/go-htmx-ecommerce-template/utils"
-
-templ NavbarButton(text, href, replace_url string) {
-	<a
-		class={ "text-2xl hover:text-gray-600 whitespace-nowrap", templ.KV("underline", utils.GetUrlFromContext(ctx) == href || utils.GetUrlFromContext(ctx) == replace_url) }
-		href={ templ.SafeURL(replace_url) }
-		hx-get={ href }
-		hx-push-url={ string(templ.SafeURL(replace_url)) }
-	>
-		{ text }
-	</a>
+templ NavbarButton(text, href, request_url string) {
+<div class="flex flex-col group items-center text-sm md:text-base text-nowrap">
+  <a href={ templ.SafeURL(href) } hx-push-url={ href } hx-get={ request_url } class="text-sm">{ text }</a>
+  <div class="max-w-0 group-hover:max-w-full w-full h-0.5 bg-black"></div>
+</div>
 }

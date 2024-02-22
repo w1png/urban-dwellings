@@ -6,7 +6,6 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo"
-	"github.com/labstack/gommon/log"
 	"github.com/w1png/go-htmx-ecommerce-template/config"
 	"github.com/w1png/go-htmx-ecommerce-template/models"
 	"github.com/w1png/go-htmx-ecommerce-template/storage"
@@ -38,7 +37,6 @@ func UseAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		user_id := uint(claims["user_id"].(float64))
 		var user *models.User
 		if err := storage.GormStorageInstance.DB.First(&user, user_id).Error; err != nil {
-			log.Error(err)
 			return next(c)
 		}
 
@@ -50,10 +48,13 @@ func UseAuth(next echo.HandlerFunc) echo.HandlerFunc {
 
 func UseAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		c.Response().Header().Set("X-Robots-Tag", "noindex, nofollow")
+
 		user_context := c.Request().Context().Value("user")
 		if user_context == nil {
 			return c.NoContent(http.StatusUnauthorized)
 		}
+
 		user := user_context.(*models.User)
 		if user.IsAdmin {
 			return next(c)

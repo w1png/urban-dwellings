@@ -1,0 +1,19 @@
+package admin_templates
+
+import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
+
+templ indexPage() {
+	<div class=""></div>
+}
+
+templ Index() {
+	@Base("Админ панель") {
+		@indexPage()
+	}
+}
+
+templ IndexApi() {
+	@scripts.SetTitle("Админ панель")
+	@Navbar()
+	@indexPage()
+}

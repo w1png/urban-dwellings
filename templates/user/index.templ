@@ -3,8 +3,7 @@ package user_templates
 import "github.com/w1png/go-htmx-ecommerce-template/models"
 import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
 
-script opacityIntersectionObserver() {
-document.addEventListener("DOMContentLoaded", function () {
+script intersectionObserver() {
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
@@ -21,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
   targets.forEach(function (target) {
     observer.observe(target);
   });
-});
 }
 
 templ Index(featured_products []*models.Product) {
@@ -135,6 +133,6 @@ templ indexPage(featured_products []*models.Product) {
 		@collectionsSection()
     @emailSubscriptionSection()
 	</div>
-	@opacityIntersectionObserver()
+	@intersectionObserver()
 }
 

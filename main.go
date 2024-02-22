@@ -1,11 +1,10 @@
 package main
 
 import (
+	"gorm.io/gorm"
 	"log"
-	"reflect"
 
 	"github.com/w1png/go-htmx-ecommerce-template/config"
-	"github.com/w1png/go-htmx-ecommerce-template/errors"
 	"github.com/w1png/go-htmx-ecommerce-template/models"
 	"github.com/w1png/go-htmx-ecommerce-template/storage"
 	"github.com/w1png/go-htmx-ecommerce-template/utils"
@@ -14,7 +13,7 @@ import (
 func createDefaultAdmin() error {
 	if err := storage.GormStorageInstance.DB.First(&models.User{}, 1).Error; err == nil {
 		return nil
-	} else if reflect.TypeOf(err) != reflect.TypeOf(&errors.ObjectNotFoundError{}) {
+	} else if err != gorm.ErrRecordNotFound {
 		return err
 	}
 
