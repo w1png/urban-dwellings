@@ -61,15 +61,6 @@ templ AddCategoryModal(categories []*models.Category) {
 				@components.LabeledInput("Название", "text", "name", "name", "", "", "w-full")
 				@components.LabeledInput("Ссылка", "text", "slug", "slug", "", "", "w-full")
 				@components.LabeledInput("Тэги", "text", "tags", "tags", "", "", "w-full")
-				<label>
-					Родительская категория
-					<select class="select" name="parent_id">
-						<option value="0">Без родительской категории</option>
-						for _, category := range categories {
-							<option value={ fmt.Sprintf("%d", category.ID) }>{ category.Name }</option>
-						}
-					</select>
-				</label>
 				@components.Checkbox("Отображается", "add-is_enabled", "is_enabled", "true", true)
 				<p id="error" class="add-error"></p>
 				<button class="submit" x-on:htmx:after-swap.window="add_category_modal_open = false">Добавить</button>
@@ -92,19 +83,6 @@ templ EditCategoryModal(category *models.Category, categories []*models.Category
 				@components.LabeledInput("Название", "text", "name", "name", category.Name, "", "w-full")
 				@components.LabeledInput("Ссылка", "text", "slug", "slug", category.Slug, "", "w-full")
 				@components.LabeledInput("Тэги", "text", "tags", "tags", category.Tags, "", "w-full")
-				<label>
-					Родительская категория
-					<select class="select" name="parent_id">
-						<option value="0" selected?={ category.ParentId==0 }>Без родительской категории</option>
-						for _, parent_category := range categories {
-							if parent_category.ID != category.ID {
-								<option value={ fmt.Sprintf("%d", parent_category.ID) } selected?={ category.ParentId==parent_category.ID }>
-									{ parent_category.Name }
-								</option>
-							}
-						}
-					</select>
-				</label>
 				@components.Checkbox("Отображается", "edit-is_enabled", "is_enabled", "true", category.IsEnabled)
 				<p id="error" class="edit-error"></p>
 				<button class="submit" x-on:htmx:after-swap.window="edit_category_modal_open = false">Сохранить</button>

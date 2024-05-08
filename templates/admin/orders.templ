@@ -1,0 +1,66 @@
+package admin_templates
+
+import "github.com/w1png/go-htmx-ecommerce-template/models"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
+import "fmt"
+
+func BurgerKing() {
+
+}
+
+func ILoveKFC() {
+
+}
+
+templ ordersPage(orders []*models.Order) {
+	<div class="container mx-auto mt-20 flex flex-col gap-4">
+		<p class="text-3xl font-bold">
+			Заказы
+		</p>
+		<table>
+			<thead>
+				<tr>
+					<th>Дата</th>
+					<th>ФИО</th>
+					<th>Email</th>
+					<th>Телефон</th>
+					<th>Сумма</th>
+					<th>Обработан</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, order := range orders {
+					<tr class="cursor-pointer"
+            hx-get={ fmt.Sprintf("/admin/api/orders/%d", order.ID) }
+          >
+						<td>{ order.FormatTime() }</td>
+						<td>{ order.Name }</td>
+						<td>{ order.Email }</td>
+						<td>{ order.PhoneNumber }</td>
+						<td>{ fmt.Sprintf("%d", order.GetTotalPrice()) }</td>
+						<td>
+							if order.IsResolved {
+								<span class="text-accent">Да</span>
+							} else {
+								<span class="text-delete">Нет</span>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ Orders(orders []*models.Order) {
+	@Base("Заказы") {
+		@ordersPage(orders)
+	}
+}
+
+templ OrdersApi(orders []*models.Order) {
+	@Navbar()
+	@ordersPage(orders)
+	@scripts.SetTitle("Заказы")
+}

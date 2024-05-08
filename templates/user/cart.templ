@@ -1,56 +1,80 @@
 package user_templates
 
-import "github.com/w1png/go-htmx-ecommerce-template/models"
-import "github.com/w1png/go-htmx-ecommerce-template/utils"
 import "fmt"
+import "github.com/w1png/go-htmx-ecommerce-template/models"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/components"
+import "github.com/w1png/go-htmx-ecommerce-template/file_storage"
 
-templ Cart() {
-	<div
-		class="fixed w-[50vw] flex flex-col h-[calc(100vh-4rem)] right-0 top-16 bg-white border-2 z-50 translate-x-full transition-transform ease-in-out duration-300"
-		hx-get="/api/cart"
-		hx-trigger="load, every 1s"
-		hx-target="#cart_products"
-		hx-swap="innerHTML"
-		id="cart"
-	>
-		<div class="h-16 w-full flex items-center justify-end">
-			<button class="h-8 w-8 rounded-full bg-gray-200" onclick="document.getElementById('cart').classList.toggle('translate-x-full')">
-				X
-			</button>
-		</div>
-		<div class="flex flex-col grow w-full gap-4" id="cart_products">
-			@CartProducts(utils.GetCartFromContext(ctx).Products)
-		</div>
-		<button class="submit w-full" hx-get="/api/checkout" hx-target="body" hx-swap="outerHTML transition:true">Оформить заказ</button>
-	</div>
+func GetTotal(cart_products []*models.CartProduct) (total int) {
+	for _, product := range cart_products {
+		total += product.Price * product.Quantity
+	}
+	return
 }
 
-templ CartProduct(cart_product *models.CartProduct) {
-	<div class="w-full h-16 flex flex-row gap-4">
-		<img class="h-16 aspect-square" src={ fmt.Sprintf("/static/images/%s", cart_product.Product.Images[0]) }/>
-		<div class="flex flex-col grow">
-			<p>{ cart_product.Name }</p>
-			<div class="flex flex-row gap-2">
-				<p class={ templ.KV("line-through", cart_product.DiscountPrice != -1) }>{ fmt.Sprintf("%d", cart_product.Price) }</p>
-				if cart_product.DiscountPrice != -1 {
-					<p>{ fmt.Sprintf("%d", cart_product.DiscountPrice) }</p>
-				}
+templ cartPage(cart_products []*models.CartProduct) {
+	<div class="container mx-auto mt-20 flex flex-col gap-8 px-2">
+		if len(cart_products) == 0 {
+			<div class="grow h-screen flex flex-col gap-4 items-center justify-center">
+				<p class="text-3xl font-bold">Корзина пуста</p>
+				<a class="submit" href="/">
+					На главную
+				</a>
 			</div>
-			<p class="text-sm">{ fmt.Sprintf("Количество: %d", cart_product.Quantity) }</p>
-		</div>
+		} else {
+			<div class="flex flex-row justify-between">
+				<p class="text-3xl font-bold">Корзина</p>
+				<p class="text-2xl">
+					Итого:
+					{ fmt.Sprintf("%d", GetTotal(cart_products)) }₽
+				</p>
+			</div>
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+				<div class="flex flex-col gap-4 lg:border-r px-4">
+					for _, product := range cart_products {
+						<div class="flex flex-row gap-4 border rounded-2xl p-4">
+							<div class="size-24">
+								<img src={ file_storage.ObjectStorageId(product.Product.Image).GetUrl("image", "webp") }/>
+							</div>
+							<div class="flex flex-col justify-center">
+								<p class="text-xl font-bold">{ product.Title }</p>
+								<div class="flex flex-row gap-2">
+									<p>{ fmt.Sprintf("%d", product.Price) }₽</p>
+									<p>x</p>
+									<p>{ fmt.Sprintf("%d", product.Quantity) }шт.</p>
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+				<form
+					class="flex flex-col gap-2"
+					hx-post="/api/checkout"
+					hx-swap="outerHTML"
+					hx-target="body"
+					hx-target-error="#error"
+				>
+					@components.LabeledInput("ФИО", "text", "name", "name", "", "", "w-full")
+					@components.LabeledInput("Адрес электронной почты", "email", "email", "email", "", "", "w-full")
+					@components.LabeledInput("Номер телефона", "text", "phone_number", "phone_number", "", "", "w-full")
+					@components.LabeledTextarea("Комментарий", "comment", "comment", "", "")
+					<p id="error" class="text-red-500 text-sm"></p>
+					<button type="submit" class="submit">Оформить заказ</button>
+				</form>
+			</div>
+		}
 	</div>
 }
 
-templ CartProducts(cart_products []*models.CartProduct) {
-	if len(cart_products) == 0 {
-		<div class="flex flex-col h-full w-full">
-			<p>Корзина пуста</p>
-		</div>
+templ Cart(cart_products []*models.CartProduct) {
+	@Base("Корзина") {
+		@cartPage(cart_products)
 	}
-	for _, cart_product := range cart_products {
-		@CartProduct(cart_product)
-	}
-	<div class="text-xl">
-		{ fmt.Sprintf("%d", utils.GetCartFromContext(ctx).GetTotalPrice()) }
-	</div>
+}
+
+templ CartApi(cart_products []*models.CartProduct) {
+	@Navbar()
+	@cartPage(cart_products)
+	@scripts.SetTitle("Корзина")
 }

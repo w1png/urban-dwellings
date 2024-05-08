@@ -1,6 +1,8 @@
 package user_handlers
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo"
 	"github.com/w1png/go-htmx-ecommerce-template/models"
 	"github.com/w1png/go-htmx-ecommerce-template/storage"
@@ -14,19 +16,19 @@ func GatherIndexHandlers(user_page_group *echo.Echo, user_api_group, admin_page_
 }
 
 func IndexApiHandler(c echo.Context) error {
-	var featured_products []*models.Product
-	if err := storage.GormStorageInstance.DB.Where("is_featured = ?", true).Find(&featured_products).Error; err != nil {
-		return err
+	var collections []*models.Collection
+	if err := storage.GormStorageInstance.DB.Where("is_enabled = ?", true).Find(&collections).Error; err != nil {
+		return c.String(http.StatusInternalServerError, "Неизвестная ошибка")
 	}
 
-	return utils.Render(c, user_templates.IndexApi(featured_products))
+	return utils.Render(c, user_templates.IndexApi(collections))
 }
 
 func IndexHandler(c echo.Context) error {
-	var featured_products []*models.Product
-	if err := storage.GormStorageInstance.DB.Where("is_featured = ?", true).Find(&featured_products).Error; err != nil {
-		return err
+	var collections []*models.Collection
+	if err := storage.GormStorageInstance.DB.Where("is_enabled = ?", true).Find(&collections).Error; err != nil {
+		return c.String(http.StatusInternalServerError, "Неизвестная ошибка")
 	}
 
-	return utils.Render(c, user_templates.Index(featured_products))
+	return utils.Render(c, user_templates.Index(collections))
 }

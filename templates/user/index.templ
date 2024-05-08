@@ -2,17 +2,18 @@ package user_templates
 
 import "github.com/w1png/go-htmx-ecommerce-template/models"
 import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
+import "fmt"
 
 script intersectionObserver() {
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
-      setTimeout(function () {
-      entry.target.dataset.intersectionObserver.split(" ").forEach(function (className) {
-        entry.target.classList.remove(className);
-      })
-      }, entry.target.dataset.intersectionObserverDelay || 300);
-      } 
+        setTimeout(function () {
+          entry.target.dataset.intersectionObserver.split(" ").forEach(function (className) {
+            entry.target.classList.remove(className);
+          })
+        }, entry.target.dataset.intersectionObserverDelay || 300);
+      }
     });
   });
 
@@ -22,28 +23,32 @@ script intersectionObserver() {
   });
 }
 
-templ Index(featured_products []*models.Product) {
+templ Index(collections []*models.Collection) {
 	@Base("Главная") {
-		@indexPage(featured_products)
+		@indexPage(collections)
 	}
 }
 
-templ IndexApi(featured_products []*models.Product) {
+templ IndexApi(collections []*models.Collection) {
 	@scripts.SetTitle("Главная")
 	@Navbar()
-	@indexPage(featured_products)
+	@indexPage(collections)
 }
 
 templ advantageCard(icon, title string, description string) {
-	<div class="flex flex-col w-1/3 max-w-96 max-h-48 items-center justify-center gap-6 opacity-0 text-center" data-intersection-observer="opacity-0" data-intersection-observer-delay="300">
+	<div
+		class="flex flex-col w-full items-center justify-center gap-6 opacity-0 text-center"
+		data-intersection-observer="opacity-0"
+		data-intersection-observer-delay="300"
+	>
 		<img class="h-16 aspect-square" src={ icon }/>
 		<h3 class="text-2xl">{ title }</h3>
-		<p class="text-subtext">{ description }</p>
+		<p class="text-subtext max-w-[30ch]">{ description }</p>
 	</div>
 }
 
 templ advantagesSection() {
-	<div class="flex flex-row justify-between gap-4 px-4">
+	<div class="grid grid-cols-1 lg:grid-cols-3 justify-between gap-12 lg:gap-4 px-4">
 		@advantageCard("/static/premium_advantage.svg", "Премиальная мебель", "Наш сайт предлагает эксклюзивную премиум мебель, доступную только здесь.")
 		@advantageCard("/static/high_quality.svg", "Высокое качество", "Мы гарантируем высочайшее качество всех наших изделий.")
 		@advantageCard("/static/individual.svg", "Индивидуальный подход", "Мы гарантируем индивидуальный подход к каждому клиенту.")
@@ -55,28 +60,26 @@ templ heroSection() {
 		class="absolute bg-secondary h-[60vh] aspect-square -left-1/4 top-1/2 rounded-full -z-10 -translate-x-full"
 		x-init="$el.classList.remove('-translate-x-full')"
 	></div>
-	<div class="w-full h-[min(100vh,55rem)] flex flex-row gap-4 justify-between">
+	<div class="w-full h-[min(100vh,55rem)] grid grid-cols-1 lg:grid-cols-2 gap-12">
 		<div
-			class="w-1/3 h-full justify-center flex flex-col gap-5 -translate-x-full opacity-0"
+			class="w-full h-full justify-center flex flex-col gap-5 -translate-x-full opacity-0"
 			x-init="setTimeout(() => $el.classList.remove('-translate-x-full', 'opacity-0'), 200)"
 		>
-			<h1 class="text-7xl text-nowrap">не просто<br/><strong>МЕБЕЛЬ</strong></h1>
-			<p class="text-subtext">
+			<h1 class="text-7xl text-nowrap select-none">не просто<br/><strong>МЕБЕЛЬ</strong></h1>
+			<p class="text-subtext select-none">
 				Добро пожаловать в URBAN DWELLINGS, ваш надежный партнер в мире стиля и комфорта. Наша мебель
 				отличается высочайшим качеством и стилем, подчеркивая уникальность вашего дома.
 			</p>
 			<a href="#top-sellers" class="submit w-fit">Смотреть товары</a>
 		</div>
-
-		<div class="relative w-1/2 h-full flex items-center justify-center">
-    	<div
-		class="absolute bg-secondary h-full aspect-square top-0 left-0 rounded-full -z-10 translate-x-full"
-		x-init="$el.classList.remove('translate-x-full')"
-	></div>
-
+		<div class="relative hidden lg:flex w-full h-full items-center justify-end">
+			<div
+				class="absolute bg-secondary w-full aspect-square top-0 right-0 rounded-full -z-10 translate-x-full"
+				x-init="$el.classList.remove('translate-x-full')"
+			></div>
 			<img
-				src="/static/hero_couch.svg"
-				class="aspect-video w-full opacity-0"
+				src="/static/hero_couch.png"
+				class="aspect-video w-full opacity-0 select-none"
 				x-init="setTimeout(() => $el.classList.remove('opacity-0'), 200)"
 			/>
 		</div>
@@ -84,55 +87,90 @@ templ heroSection() {
 }
 
 func getIntersectionObserverData(right bool) string {
-  if right {
-    return "translate-x-full opacity-0"
-  }
-  return "-translate-x-full opacity-0"
+	if right {
+		return "translate-x-full opacity-0"
+	}
+	return "-translate-x-full opacity-0"
 }
 
-templ collectionCard(image, title, description string, right bool) {
-	<div class={ "w-full flex justify-between", templ.KV("flex-row-reverse", right) }>
-		<div class={ "w-1/2 aspect-square relative opacity-0", getIntersectionObserverData(right) } data-intersection-observer={ getIntersectionObserverData(right) } data-intersection-observer-delay="300">
-			<img class="hidden rounded-md" src={ image } onload="this.classList.remove('hidden')"/>
-			<div class="w-full h-full bg-secondary absolute z-10 flex items-center justify-center rounded-md">
-				<img class="h-24 aspect-square" src="/static/image.svg"/>
+templ CollectionCard(collection *models.Collection, right bool) {
+	<div class={ "w-full flex flex-col lg:flex-row justify-between" , templ.KV("lg:flex-row-reverse", right) }>
+		<a
+			href={ templ.SafeURL(fmt.Sprintf("/collection/%d", collection.ID)) }
+			class={ "hover:scale-105 lg:w-1/2 aspect-square overflow-hidden relative opacity-0" , getIntersectionObserverData(right) }
+			data-intersection-observer={ getIntersectionObserverData(right) }
+			data-intersection-observer-delay="300"
+			x-data="{ image_loaded: false }"
+		>
+			<img
+				class="w-full h-full rounded-md object-cover"
+				x-transition
+				x-show="image_loaded"
+				src={ collection.Image.GetUrl("image", "webp") }
+				@load="image_loaded = true"
+			/>
+			<div
+				class="w-full h-full bg-secondary absolute z-10 flex items-center justify-center rounded-md animate-pulse"
+				x-transition
+				x-show="!image_loaded"
+			>
+				<img class="h-24 aspect-square" src="/static/image.svg" x-cloak/>
 			</div>
-		</div>
-		<div class={"w-1/2 aspect-square flex flex-col items-center justify-center px-8 text-start gap-4 opacity-0", getIntersectionObserverData(!right)} data-intersection-observer={ getIntersectionObserverData(!right) } data-intersection-observer-delay="300">
-			<h2 class="text-3xl">{ title }</h2>
-			<p class="text-subtext">{ description }</p>
+		</a>
+		<div
+			class={ "lg:w-1/2 aspect-square flex flex-col justify-center px-8 text-start gap-4 opacity-0" ,
+    getIntersectionObserverData(!right) }
+			data-intersection-observer={ getIntersectionObserverData(!right) }
+			data-intersection-observer-delay="300"
+		>
+			<h2 class="text-3xl">{ collection.Title }</h2>
+			<p class="text-subtext text-wrap break-words">{ collection.Description }</p>
 		</div>
 	</div>
 }
 
-templ collectionsSection() {
-	<div class="flex flex-col text-center gap-10 opacity-0 items-center" data-intersection-observer="opacity-0" data-intersection-observer-delay="300">
+templ collectionsSection(collections []*models.Collection) {
+	<div
+		class="flex flex-col text-center gap-10 opacity-0 items-center"
+		data-intersection-observer="opacity-0"
+		data-intersection-observer-delay="300"
+	>
 		<h2 class="text-6xl">Наши коллекции</h2>
-		<p class="text-subtext max-w-xl">Ниже представлены наши самые популярные коллекции мебели, вдохновленные элегантностью и современными тенденциями в дизайне интерьеров.</p>
-		@collectionCard("asd", "Летняя Гармония: Линейка Мебели Для Комфортного Отдыха", "Вдохновленная красотой природы и теплом летнего солнца, коллекция призвана создать атмосферу умиротворения и комфорта. Ее непринужденный стиль внесут в ваш интерьер ноты спокойствия и радости летнего времени, при этом сохраняя изысканность и изящество премиум класса.", false)
-		@collectionCard("asd", "Летняя Гармония: Линейка Мебели Для Комфортного Отдыха", "Вдохновленная красотой природы и теплом летнего солнца, коллекция призвана создать атмосферу умиротворения и комфорта. Ее непринужденный стиль внесут в ваш интерьер ноты спокойствия и радости летнего времени, при этом сохраняя изысканность и изящество премиум класса.", true)
-		@collectionCard("asd", "Летняя Гармония: Линейка Мебели Для Комфортного Отдыха", "Вдохновленная красотой природы и теплом летнего солнца, коллекция призвана создать атмосферу умиротворения и комфорта. Ее непринужденный стиль внесут в ваш интерьер ноты спокойствия и радости летнего времени, при этом сохраняя изысканность и изящество премиум класса.", false)
+		<p class="text-subtext max-w-xl">
+			Ниже представлены наши самые популярные коллекции мебели, вдохновленные элегантностью
+			и современными тенденциями в дизайне интерьеров.
+		</p>
+		for i, collection := range collections {
+			@CollectionCard(collection, i%2 != 0)
+		}
 	</div>
 }
 
 templ emailSubscriptionSection() {
-<div class="w-full h-80 bg-secondary rounded-xl justify-between py-8 items-center flex flex-col opacity-0" data-intersection-observer="opacity-0" data-intersection-observer-delay="300">
-<h3 class="text-6xl">Будьте в курсе</h3>
-<p class="text-subtext text-center">Подпишитесь на нашу рассылку, чтобы всегда быть<br/>в курсе новых поступлений!</p>
-<form class="flex flex-row gap-5">
-<input type="email" name="email" placeholder="Ваша почта" class="input"/>
-<button class="submit">Подписаться</button>
-</form>
-</div>
+	<div
+		class="w-full h-80 bg-secondary rounded-xl justify-between py-8 items-center flex flex-col opacity-0"
+		data-intersection-observer="opacity-0"
+		data-intersection-observer-delay="300"
+	>
+		<h3 class="text-6xl">Остались вопросы?</h3>
+		<p class="text-subtext text-center">
+			Отправьте запрос на обратную связь
+			<br/>
+			и наш менеджер свяжется с вами в ближайшее время!
+		</p>
+		<form class="flex flex-row gap-5">
+			<input type="email" name="email" placeholder="Ваша почта" class="input"/>
+			<button class="submit">Подписаться</button>
+		</form>
+	</div>
 }
 
-templ indexPage(featured_products []*models.Product) {
-	<div class="container mx-auto px-4 flex flex-col gap-24 py-6">
+templ indexPage(collections []*models.Collection) {
+	<div class="container mx-auto px-4 flex flex-col gap-24 py-6 mt-20">
 		@heroSection()
 		@advantagesSection()
-		@collectionsSection()
-    @emailSubscriptionSection()
+		@collectionsSection(collections)
+		@emailSubscriptionSection()
 	</div>
 	@intersectionObserver()
 }
-

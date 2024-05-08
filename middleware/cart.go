@@ -2,8 +2,9 @@ package middleware
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"net/http"
+
+	"gorm.io/gorm"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
@@ -21,8 +22,7 @@ func UseCart(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		var cart *models.Cart
 
-		uuid, err := uuid.Parse(cart_uuid.Value)
-		if err != nil {
+		if cart_uuid == nil {
 			cart = models.NewCart()
 			if err := storage.GormStorageInstance.DB.Create(&cart).Error; err != nil {
 				return err
@@ -34,6 +34,10 @@ func UseCart(next echo.HandlerFunc) echo.HandlerFunc {
 				Value: cart.UUID.String(),
 			})
 		} else {
+			uuid, err := uuid.Parse(cart_uuid.Value)
+			if err != nil {
+				return err
+			}
 			if err := storage.GormStorageInstance.DB.Where("uuid = ?", uuid).First(&cart).Error; err != nil && err != gorm.ErrRecordNotFound {
 				return err
 			}

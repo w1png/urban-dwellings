@@ -1,0 +1,184 @@
+package admin_templates
+
+import "github.com/w1png/go-htmx-ecommerce-template/models"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/components/icons"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/components"
+import "fmt"
+import "github.com/w1png/go-htmx-ecommerce-template/file_storage"
+
+templ Product(product *models.Product) {
+	<div class="admin-object-card-parent justify-between items-center p-2" id={ fmt.Sprintf("product_%d", product.ID) }>
+		<div class="flex gap-2 h-full items-center">
+			<img
+				class="h-full aspect-square rounded-md"
+				src={ file_storage.ObjectStorageId(product.Image).GetUrl("image", "webp") }
+			/>
+			<span class="text-xl max-w-[15ch] truncate">{ product.Title }</span>
+		</div>
+		<div class="flex flex-row gap-2">
+			<button
+				class="submit h-12 group"
+				hx-get={ fmt.Sprintf("/admin/api/products/%d/edit", product.ID) }
+				hx-target="#modal-target"
+				hx-swap="innerHTML"
+			>
+				@icons.Edit("h-6 aspect-square text-white group-hover:text-accent block md:hidden")
+				<span class="hidden md:block">Редактировать</span>
+			</button>
+			<button
+				class="delete h-12 group"
+				hx-delete={ fmt.Sprintf("/admin/api/products/%d", product.ID) }
+				hx-target={ fmt.Sprintf("#product_%d", product.ID) }
+				hx-swap="outerHTML"
+			>
+				@icons.Delete("h-6 aspect-square text-white group-hover:text-delete block md:hidden")
+				<span class="hidden md:block">Удалить</span>
+			</button>
+		</div>
+	</div>
+}
+
+templ EditProductModal(product *models.Product, collections []*models.Collection) {
+	@components.Modal("open") {
+		<span hx-ext="response-targets" x-init="open = true">
+			<form
+				hx-put={ fmt.Sprintf("/admin/api/products/%d", product.ID) }
+				hx-target={ fmt.Sprintf("#product_%d", product.ID) }
+				hx-swap="outerHTML"
+				hx-target-error="#error"
+				hx-encoding="multipart/form-data"
+				class="w-[min(60rem,90vw)] bg-white rounded-2xl border-2 border-accent flex flex-col gap-2 p-6"
+			>
+				<label class="submit w-full h-fit">
+					<p id="add-image-button">
+						{ product.Image }.webp
+					</p>
+					<input
+						type="file"
+						name="image"
+						id="add-image"
+						accept="image/*"
+						@input="document.getElementById('add-image-button').innerHTML = $el.files[0].name"
+					/>
+				</label>
+				@components.LabeledInput("Название", "text", "title", "add-title", product.Title, "", "w-full")
+				@components.LabeledInput("Ссылка", "text", "slug", "add-slug", product.Slug, "", "w-full")
+				@components.LabeledInput("Цена", "number", "price", "add-price", fmt.Sprintf("%d", product.Price), "", "w-full")
+				<label>
+					Коллекция
+					<select name="collection" id="add-collection" class="select">
+						for _, collection := range collections {
+							<option value={ fmt.Sprintf("%d", collection.ID) } selected?={ collection.ID==product.CollectionId }>
+								{ 
+          collection.Title }
+							</option>
+						}
+					</select>
+				</label>
+				@components.LabeledTextarea("Описание", "add-description", "description", product.Description, "")
+				<p id="error" class="error"></p>
+				<button class="submit" x-on:htmx:after-swap.window="open = false">
+					Сохранить
+				</button>
+			</form>
+		</span>
+	}
+}
+
+templ AddProductModal(collections []*models.Collection) {
+	@components.Modal("open") {
+		<span hx-ext="response-targets" x-init="open = true">
+			<form
+				hx-post="/admin/api/products"
+				hx-target="#product-list"
+				hx-swap="afterbegin"
+				hx-target-error="#error"
+				hx-encoding="multipart/form-data"
+				class="w-[min(60rem,90vw)] bg-white rounded-2xl border-2 border-accent flex flex-col gap-2 p-6"
+			>
+				<label class="submit w-full h-fit">
+					<p id="add-image-button">Загрузить</p>
+					<input
+						type="file"
+						name="image"
+						id="add-image"
+						accept="image/*"
+						@input="document.getElementById('add-image-button').innerHTML = $el.files[0].name"
+					/>
+				</label>
+				@components.LabeledInput("Название", "text", "title", "add-title", "", "", "w-full")
+				@components.LabeledInput("Ссылка", "text", "slug", "add-slug", "", "", "w-full")
+				@components.LabeledInput("Цена", "number", "price", "add-price", "", "", "w-full")
+				<label>
+					Коллекция
+					<select name="collection" id="add-collection" class="select">
+						for _, collection := range collections {
+							<option value={ fmt.Sprintf("%d", collection.ID) }>{ collection.Title }</option>
+						}
+					</select>
+				</label>
+				@components.LabeledTextarea("Описание", "add-description", "description", "", "")
+				<p id="error" class="error"></p>
+				<button class="submit" x-on:htmx:after-swap.window="open = false">Добавить</button>
+			</form>
+		</span>
+	}
+}
+
+templ ProductsList(products []*models.Product, next_page int, search string) {
+	for _, product := range products {
+		@Product(product)
+	}
+	if len(products) == models.PRODUCTS_PER_PAGE {
+		<span
+			class="hidden"
+			hx-get={ fmt.Sprintf("/admin/api/products/page/%d?search=%s", next_page, search) }
+			hx-target="#product-list"
+			hx-swap="beforeend"
+			hx-trigger="revealed"
+			hx-indicator="#pagination-loading"
+		></span>
+	}
+}
+
+templ productsApi(products []*models.Product, search string) {
+	<span x-data="{ open: false }" id="modal-target"></span>
+	<div class="container mx-auto p-4 flex flex-col gap-6 mt-16">
+		<div class="flex flex-row gap-2">
+			<input
+				type="text"
+				class="input"
+				name="search"
+				placeholder="Поиск"
+				hx-post="/admin/api/products/search"
+				hx-target="#product-list"
+				hx-swap="innerHTML"
+				hx-trigger="input changed delay:500ms, search"
+				value={ search }
+			/>
+			<button
+				class="submit"
+				hx-get="/admin/api/products/add"
+				hx-target="#modal-target"
+				hx-swap="innerHTML"
+			>Добавить</button>
+		</div>
+		<div class="flex flex-col gap-2" id="product-list">
+			@ProductsList(products, 2, search)
+		</div>
+		<p class="htmx-indicator" id="pagination-loading">Загрузка...</p>
+	</div>
+}
+
+templ Products(products []*models.Product, search string) {
+	@Base("Товары") {
+		@productsApi(products, search)
+	}
+}
+
+templ ProductsApi(products []*models.Product, search string) {
+	@scripts.SetTitle("Товары")
+	@Navbar()
+	@productsApi(products, search)
+}

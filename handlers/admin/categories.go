@@ -14,16 +14,16 @@ import (
 )
 
 func GatherCategoriesRoutes(user_page_group *echo.Echo, user_api_group, admin_page_group, admin_api_group *echo.Group) {
-	admin_page_group.GET("/categories", CategoriesIndexHandler)
-	admin_api_group.GET("/categories", CategoriesIndexApiHandler)
-	admin_api_group.GET("/categories/page/:page", CategoriesPageHandler)
-	admin_api_group.POST("/categories/search", CategoriesSearchHandler)
-	admin_api_group.GET("/categories/add", AddCategoryModalHandler)
-	admin_api_group.POST("/categories", PostCategoryHandler)
-	admin_api_group.GET("/categories/:id/delete", DeleteCategoryModalHandler)
-	admin_api_group.DELETE("/categories/:id", DeleteCategoryHandler)
-	admin_api_group.GET("/categories/:id/edit", EditCategoryModalHandler)
-	admin_api_group.PUT("/categories/:id", PutCategoryHandler)
+	// admin_page_group.GET("/categories", CategoriesIndexHandler)
+	// admin_api_group.GET("/categories", CategoriesIndexApiHandler)
+	// admin_api_group.GET("/categories/page/:page", CategoriesPageHandler)
+	// admin_api_group.POST("/categories/search", CategoriesSearchHandler)
+	// admin_api_group.GET("/categories/add", AddCategoryModalHandler)
+	// admin_api_group.POST("/categories", PostCategoryHandler)
+	// admin_api_group.GET("/categories/:id/delete", DeleteCategoryModalHandler)
+	// admin_api_group.DELETE("/categories/:id", DeleteCategoryHandler)
+	// admin_api_group.GET("/categories/:id/edit", EditCategoryModalHandler)
+	// admin_api_group.PUT("/categories/:id", PutCategoryHandler)
 }
 
 func CategoriesIndexHandler(c echo.Context) error {
@@ -129,14 +129,9 @@ func PostCategoryHandler(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Теги не могут быть пустыми")
 	}
 
-	parent_id, err := strconv.ParseUint(c.FormValue("parent_id"), 10, 64)
-	if err != nil {
-		return c.String(http.StatusBadRequest, "Неверный запрос")
-	}
-
 	is_enabled, _ := strconv.ParseBool(c.FormValue("is_enabled"))
 
-	category := models.NewCategory(name, slug, tags, uint(parent_id))
+	category := models.NewCategory(name, slug, tags)
 	category.IsEnabled = is_enabled
 	if err := storage.GormStorageInstance.DB.Create(&category).Error; err != nil {
 		log.Error(err)
@@ -226,13 +221,7 @@ func PutCategoryHandler(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Теги не могут быть пустыми")
 	}
 
-	parent_id, err := strconv.ParseUint(c.FormValue("parent_id"), 10, 64)
-	if err != nil {
-		return c.String(http.StatusBadRequest, "Неверный запрос")
-	}
-
 	is_enabled, _ := strconv.ParseBool(c.FormValue("is_enabled"))
-
 	var category *models.Category
 	if err := storage.GormStorageInstance.DB.First(&category, id).Error; err != nil {
 		log.Error(err)
@@ -242,7 +231,6 @@ func PutCategoryHandler(c echo.Context) error {
 	category.Name = name
 	category.Slug = slug
 	category.Tags = tags
-	category.ParentId = uint(parent_id)
 	category.IsEnabled = is_enabled
 
 	if err := storage.GormStorageInstance.DB.Save(&category).Error; err != nil {

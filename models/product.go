@@ -3,82 +3,44 @@ package models
 import (
 	"strings"
 
-	"github.com/w1png/go-htmx-ecommerce-template/gorm_types"
 	"gorm.io/gorm"
 )
 
-type StockType int
-
-var STOCK_TYPES_ARRAY = []StockType{
-	StockTypeInStock,
-	StockTypeOutOfStock,
-	StockTypeOrder,
-}
-
-const PRODUCTS_PER_PAGE = 20
-
-const (
-	StockTypeInStock StockType = iota
-	StockTypeOutOfStock
-	StockTypeOrder
-)
-
-func (s StockType) ToString() string {
-	switch s {
-	case StockTypeInStock:
-		return "В наличии"
-	case StockTypeOutOfStock:
-		return "Нет в наличии"
-	case StockTypeOrder:
-		return "Под заказ"
-	default:
-		return "Неизвестно"
-	}
-}
+const PRODUCTS_PER_PAGE = 10000
 
 type Product struct {
 	gorm.Model
 
-	ID            uint
-	Slug          string `gorm:"unique"`
-	Name          string
-	Description   string
-	Price         int
-	DiscountPrice int
-	StockType     StockType
-	Tags          string
+	ID          uint
+	Slug        string `gorm:"unique"`
+	Title       string
+	Description string
+	Price       int
 
-	CategoryId uint
-	Category   Category `gorm:"foreignKey:CategoryId"`
+	CollectionId uint
+	Collection   Collection `gorm:"foreignKey:CollectionId"`
 
-	Images     gorm_types.StringArray `gorm:"type:text[]"`
-	IsEnabled  bool
+	Image      string
 	IsFeatured bool
 }
 
 func NewProduct(
 	slug string,
-	name string,
+	title string,
 	description string,
 	price int,
-	stock_type StockType,
-	tags string,
-	category_id uint,
-	images []string,
+	collection_id uint,
+	image string,
 ) *Product {
 	dashed_slug := strings.ReplaceAll(slug, " ", "-")
 
 	return &Product{
-		Slug:          dashed_slug,
-		Name:          name,
-		Description:   description,
-		Price:         price,
-		DiscountPrice: -1,
-		StockType:     stock_type,
-		Tags:          tags,
-		CategoryId:    category_id,
-		Images:        images,
-		IsEnabled:     false,
-		IsFeatured:    false,
+		Slug:         dashed_slug,
+		Title:        title,
+		Description:  description,
+		Price:        price,
+		CollectionId: collection_id,
+		Image:        image,
+		IsFeatured:   false,
 	}
 }

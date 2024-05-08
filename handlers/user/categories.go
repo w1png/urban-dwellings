@@ -9,8 +9,29 @@ import (
 )
 
 func GatherCategoriesRoutes(user_page_group *echo.Echo, user_api_group, admin_page_group, admin_api_group *echo.Group) {
+	user_page_group.GET("/categories", CategoriesHandler)
+	user_api_group.GET("/categories", CategoriesApiHandler)
 	user_page_group.GET("/categories/:slug", CategoryHandler)
 	user_api_group.GET("/categories/:slug", CategoryApiHandler)
+}
+
+func CategoriesHandler(c echo.Context) error {
+	var categories []*models.Category
+
+	if err := storage.GormStorageInstance.DB.Find(&categories).Error; err != nil {
+		return err
+	}
+
+	return utils.Render(c, user_templates.Categories(categories))
+}
+
+func CategoriesApiHandler(c echo.Context) error {
+	var categories []*models.Category
+	if err := storage.GormStorageInstance.DB.Find(&categories).Error; err != nil {
+		return err
+	}
+
+	return utils.Render(c, user_templates.CategoriesApi(categories))
 }
 
 func CategoryApiHandler(c echo.Context) error {

@@ -3,7 +3,7 @@ module github.com/w1png/go-htmx-ecommerce-template
 go 1.22
 
 require (
-	github.com/a-h/templ v0.2.501
+	github.com/a-h/templ v0.2.680
 	github.com/aws/aws-sdk-go-v2 v1.25.1
 	github.com/aws/aws-sdk-go-v2/config v1.27.2
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.16.4
@@ -13,8 +13,7 @@ require (
 	github.com/h2non/bimg v1.1.9
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.4.2
-	github.com/w1png/htmx-template v0.0.0-20231229124222-84eeb196f68b
-	golang.org/x/crypto v0.17.0
+	golang.org/x/crypto v0.22.0
 	gorm.io/driver/postgres v1.5.6
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/gorm v1.25.7-0.20240204074919-46816ad31dde
@@ -48,7 +47,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 )

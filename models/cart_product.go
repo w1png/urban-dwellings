@@ -12,11 +12,10 @@ type CartProduct struct {
 	Product   *Product `gorm:"foreignKey:ProductId"`
 	CartID    uint
 
-	Slug          string
-	Name          string
-	Price         int
-	DiscountPrice int
-	Quantity      int
+	Slug     string
+	Title    string
+	Price    int
+	Quantity int
 }
 
 func NewCartProduct(
@@ -25,17 +24,15 @@ func NewCartProduct(
 	slug string,
 	name string,
 	price int,
-	discount_price int,
 	quantity int,
 ) *CartProduct {
 	return &CartProduct{
-		ProductId:     product_id,
-		CartID:        cart_id,
-		Slug:          slug,
-		Name:          name,
-		Price:         price,
-		DiscountPrice: discount_price,
-		Quantity:      quantity,
+		ProductId: product_id,
+		CartID:    cart_id,
+		Slug:      slug,
+		Title:     name,
+		Price:     price,
+		Quantity:  quantity,
 	}
 }
 
@@ -53,9 +50,8 @@ func (c *CartProduct) AfterFind(tx *gorm.DB) error {
 	}
 
 	c.Slug = c.Product.Slug
-	c.Name = c.Product.Name
+	c.Title = c.Product.Title
 	c.Price = c.Product.Price
-	c.DiscountPrice = c.Product.DiscountPrice
 
 	if err = tx.Save(c).Error; err != nil {
 		return nil
@@ -65,9 +61,5 @@ func (c *CartProduct) AfterFind(tx *gorm.DB) error {
 }
 
 func (c *CartProduct) TotalPrice() int {
-	if c.DiscountPrice != -1 {
-		return c.DiscountPrice * c.Quantity
-	}
-
 	return c.Price * c.Quantity
 }

@@ -3,13 +3,13 @@ package components
 import "fmt"
 
 templ AddToCartButton(product_id uint, quantity int) {
-	<div class="flex flex-row p-2 h-16 bg-gray-400 rounded-xl" hx-target="this" hx-swap="outerHTML">
+	<div class="flex flex-row p-2 w-fit h-16 bg-accent items-center text-white rounded-xl" hx-target="this" hx-swap="outerHTML">
 		if quantity != 0 {
-			<button class="h-full aspect-square" hx-put={ fmt.Sprintf("/api/cart/change_quantity/%d?decrease=true", product_id) }>{ "-" }</button>
+			<button class="h-full text-3xl aspect-square" hx-put={ fmt.Sprintf("/api/cart/change_quantity/%d?decrease=true", product_id) }>{ "-" }</button>
 		} else {
-			<button class="h-full text-gray-400 aspect-square">{ "-" }</button>
+			<button class="h-full text-3xl aspect-square">{ "-" }</button>
 		}
-		<p class="grow">{ fmt.Sprintf("%d", quantity) }</p>
-		<button class="h-full aspect-square" hx-put={ fmt.Sprintf("/api/cart/change_quantity/%d", product_id) }>{ "+" }</button>
+		<p class="h-full aspect-square flex items-center justify-center">{ fmt.Sprintf("%d", quantity) }</p>
+		<button class="h-full text-3xl aspect-square" hx-put={ fmt.Sprintf("/api/cart/change_quantity/%d", product_id) }>{ "+" }</button>
 	</div>
 }

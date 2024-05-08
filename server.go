@@ -43,14 +43,16 @@ func NewHTTPServer() *HTTPServer {
 		user_handlers.GatherLoginRoutes,
 		admin_handlers.GatherUsersRoutes,
 		user_handlers.GatherProductsRoutes,
-		// admin_handlers.GatherProductsRoutes,
+		admin_handlers.GatherProductsRoutes,
 		user_handlers.GatherCategoriesRoutes,
 		admin_handlers.GatherCategoriesRoutes,
 		user_handlers.GatherOrdersRoutes,
 		// admin_handlers.GatherOrdersRoutes,
 		user_handlers.GatherCartRoutes,
 		admin_handlers.GatherCollectionsRoutes,
+		admin_handlers.GatherOrderRoutes,
 		handlers.GatherFilesHandler,
+		user_handlers.GatherCollectionsRoutes,
 	}
 
 	for _, f := range gather_funcs {

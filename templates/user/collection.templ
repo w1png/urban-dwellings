@@ -1,0 +1,30 @@
+package user_templates
+
+import "github.com/w1png/go-htmx-ecommerce-template/models"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/scripts"
+import "github.com/w1png/go-htmx-ecommerce-template/templates/components"
+
+templ collectionPage(collection *models.Collection) {
+	<div class="container mx-auto px-4 flex flex-col gap-8 pt-20 mt-">
+		@CollectionCard(collection, false)
+		<p class="text-3xl font-bold">Товары</p>
+		<div class="w-full grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+			for _, product := range collection.Products {
+				@components.ProductCard(product, "")
+			}
+		</div>
+	</div>
+	@intersectionObserver()
+}
+
+templ Collection(collection *models.Collection) {
+	@Base(collection.Title) {
+		@collectionPage(collection)
+	}
+}
+
+templ CollectionApi(collection *models.Collection) {
+	@scripts.SetTitle(collection.Title)
+	@Navbar()
+	@Collection(collection)
+}

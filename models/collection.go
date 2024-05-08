@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const COLLECTIONS_PER_PAGE = 1
+const COLLECTIONS_PER_PAGE = 100000
 
 type Collection struct {
 	gorm.Model

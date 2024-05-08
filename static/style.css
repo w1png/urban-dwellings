@@ -23,7 +23,8 @@ font-style: normal;
 }
 
 button,
-input {
+input,
+img {
 @apply select-none;
 }
 
@@ -67,11 +68,11 @@ input[type="file"] {
 
 @layer components {
 .input {
-@apply rounded-2xl border-2 border-border py-4 px-6 w-full;
+@apply rounded-2xl border border-border py-4 px-6 w-full select-none;
 }
 
 .select {
-@apply rounded-2xl border-2 border-border py-4 px-6 w-full;
+@apply rounded-2xl border-2 border-border py-4 px-6 w-full select-none;
 }
 }
 
@@ -85,22 +86,22 @@ input[type="file"] {
 
 .submit {
 @apply py-4 px-6 border-2 border-accent bg-accent text-white rounded-xl hover:bg-white hover:text-accent
-cursor-pointer flex items-center justify-center;
+cursor-pointer flex items-center justify-center select-none;
 }
 
 .delete {
 @apply py-4 px-6 border-2 border-delete bg-delete text-white rounded-xl hover:bg-white hover:text-delete
-cursor-pointer flex items-center justify-center;
+cursor-pointer flex items-center justify-center select-none;
 }
 
 .submit-disabled {
 @apply py-2 px-6 border-2 border-submit-disabled bg-submit-disabled text-white text-2xl rounded-2xl animate-pulse
-cursor-not-allowed;
+cursor-not-allowed select-none;
 }
 
 .delete-disabled {
 @apply py-2 px-6 border-2 border-delete-disabled bg-delete-disabled text-white text-2xl rounded-2xl animate-pulse
-cursor-not-allowed;
+cursor-not-allowed select-none;
 }
 
 .htmx-indicator {
@@ -159,7 +160,7 @@ animation:
 }
 
 .page-transition {
-view-transition-name: page-transition-animation;
+/* view-transition-name: page-transition-animation; */
 }
 
 .admin-object-card-parent {
@@ -218,4 +219,24 @@ box-shadow: -100vw 0 0 0.25rem rgb(117 84 255);
 
 .opacity-intersection {
 @apply opacity-0;
+}
+
+table {
+  @apply text-left text-nowrap overflow-scroll;
+}
+
+thead {
+  @apply uppercase border-b;
+}
+
+tr {
+  @apply hover:bg-gray-100;
+}
+
+th {
+  @apply py-4 px-6;
+}
+
+td {
+  @apply py-4 px-6;
 }
