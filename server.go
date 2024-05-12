@@ -32,7 +32,7 @@ func NewHTTPServer() *HTTPServer {
 	server.echo.Use(echoMiddleware.Recover())
 	server.echo.Use(middleware.UseAuth)
 	server.echo.Use(middleware.UseUrl)
-	server.echo.Use(middleware.UseCategories)
+	// server.echo.Use(middleware.UseCategories)
 	server.echo.Use(middleware.UseCart)
 
 	server.echo.Static("/static", "static")
