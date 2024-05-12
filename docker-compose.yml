@@ -1,0 +1,34 @@
+
+
+version: "3"
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: urbandwellings
+      POSTGRES_USER: urbandwellings
+      POSTGRES_DB: urbandwellings
+    restart: always
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+  website:
+     build:
+       context: .
+       dockerfile: Dockerfile
+     ports:
+       - 7777:8080
+     depends_on:
+       - database
+     environment:
+       - JWT_SECRET=fbashjbfvjasdvbfjhgsdvbjf
+       - STORAGE_TYPE=postgres
+       - POSTGRES_HOST=database
+       - POSTGRES_PORT=5432
+       - POSTGRES_DATABASE=urbandwellings
+       - POSTGRES_USER=urbandwellings
+       - POSTGRES_PASSWORD=urbandwellings
+       - OBJECT_STORAGE_BUCKET_NAME=dev-bkt
+       - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+       - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+     restart: always
