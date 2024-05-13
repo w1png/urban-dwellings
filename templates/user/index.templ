@@ -70,7 +70,10 @@ templ heroSection() {
 				Добро пожаловать в URBAN DWELLINGS, ваш надежный партнер в мире стиля и комфорта. Наша мебель
 				отличается высочайшим качеством и стилем, подчеркивая уникальность вашего дома.
 			</p>
-			<a href="#top-sellers" class="submit w-fit">Смотреть товары</a>
+			<button
+				onclick="document.getElementById('collections').scrollIntoView({behavior: 'smooth'})"
+				class="submit w-fit"
+			>Смотреть коллекции</button>
 		</div>
 		<div class="relative hidden lg:flex w-full h-full items-center justify-end">
 			<div
@@ -132,6 +135,7 @@ templ CollectionCard(collection *models.Collection, right bool) {
 templ collectionsSection(collections []*models.Collection) {
 	<div
 		class="flex flex-col text-center gap-10 opacity-0 items-center"
+		id="collections"
 		data-intersection-observer="opacity-0"
 		data-intersection-observer-delay="300"
 	>
